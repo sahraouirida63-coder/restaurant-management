@@ -1,0 +1,129 @@
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { Layout } from "./components/Layout";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LoadingSpinner } from "./components/LoadingSpinner";
+
+// Pages
+import LoginPage from "./pages/LoginPage";
+import OwnerDashboard from "./pages/OwnerDashboard";
+import ManagerDashboard from "./pages/ManagerDashboard";
+import WaiterDashboard from "./pages/WaiterDashboard";
+import ChefDashboard from "./pages/ChefDashboard";
+import CashierDashboard from "./pages/CashierDashboard";
+import StockDashboard from "./pages/StockDashboard";
+import DeliveryDashboard from "./pages/DeliveryDashboard";
+
+const AppRoutes: React.FC = () => {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Protected Routes */}
+      <Route
+        path="/owner"
+        element={
+          <ProtectedRoute roles={["owner"]}>
+            <Layout>
+              <OwnerDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/manager"
+        element={
+          <ProtectedRoute roles={["manager"]}>
+            <Layout>
+              <ManagerDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/waiter"
+        element={
+          <ProtectedRoute roles={["waiter"]}>
+            <Layout>
+              <WaiterDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/chef"
+        element={
+          <ProtectedRoute roles={["chef"]}>
+            <Layout>
+              <ChefDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/cashier"
+        element={
+          <ProtectedRoute roles={["cashier"]}>
+            <Layout>
+              <CashierDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/stock"
+        element={
+          <ProtectedRoute roles={["stock"]}>
+            <Layout>
+              <StockDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/delivery"
+        element={
+          <ProtectedRoute roles={["delivery"]}>
+            <Layout>
+              <DeliveryDashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Default route */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
+
+export default App;
